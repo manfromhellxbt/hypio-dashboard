@@ -13,7 +13,7 @@ interface HolderGrowthChartProps {
 }
 
 export default function HolderGrowthChart({ data }: HolderGrowthChartProps) {
-  // Форматируем данные для графика
+  // Format data for chart
   const chartData = data.map(point => ({
     date: new Date(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     'Total Holders': point.totalHolders,

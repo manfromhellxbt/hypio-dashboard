@@ -15,7 +15,7 @@ interface DistributionChartProps {
 const COLORS = ['#818cf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#60a5fa', '#fb923c', '#ec4899'];
 
 export default function DistributionChart({ holders }: DistributionChartProps) {
-  // Берём топ-8 холдеров для читаемости
+  // Get top 8 holders for readability
   const top8 = holders.slice(0, 8);
   
   const chartData = top8.map(holder => ({

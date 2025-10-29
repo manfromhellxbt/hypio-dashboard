@@ -8,7 +8,7 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     setMounted(true);
-    // Проверяем сохранённую тему или системные настройки
+    // Check saved theme or system preferences
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -35,7 +35,7 @@ export default function ThemeToggle() {
     }
   };
 
-  // Не рендерим кнопку до монтирования на клиенте
+  // Don't render button until mounted on client
   if (!mounted) {
     return (
       <button

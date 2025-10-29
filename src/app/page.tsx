@@ -61,7 +61,7 @@ export default function Home() {
           
           if (holders.success) setHolderData(holders);
           if (stats.success) setStatsData(stats);
-          setLastUpdate(new Date()); // ← НОВАЯ СТРОКА
+          setLastUpdate(new Date());
         } catch (error) {
           console.error('Error fetching data:', error);
         } finally {
@@ -69,19 +69,19 @@ export default function Home() {
         }
       }
 
-      // Первая загрузка
+      // Initial fetch
       fetchData();
 
-      // Автообновление каждые 30 секунд
+      // Auto-refresh every 30 seconds
       const interval = setInterval(() => {
         fetchData();
       }, 30000);
 
-      // Очистка при размонтировании
+      // Cleanup on unmount
       return () => clearInterval(interval);
     }, []);
-    
-    // Форматирование времени последнего обновления
+
+    // Format time since last update
     const getTimeAgo = (date: Date) => {
       const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
       
@@ -92,17 +92,23 @@ export default function Home() {
       return `${hours} hour${hours > 1 ? 's' : ''} ago`;
     };
 
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 dark:border-indigo-400 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading data...</p>
+    if (loading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+          <div className="text-center">
+            <div className="relative">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 dark:border-indigo-400 mx-auto"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="h-8 w-8 bg-indigo-600 dark:bg-indigo-400 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+            <p className="mt-6 text-lg font-medium text-gray-600 dark:text-gray-400">Loading dashboard...</p>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">Fetching latest holder data</p>
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
+
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
@@ -213,6 +219,33 @@ export default function Home() {
           <TopHoldersTable holders={holderData.topHolders.slice(0, 10)} />
         )}
       </div>
+          {/* Footer */}
+          <footer className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                © 2025 Hypio NFT Dashboard. Data from HyperEVM blockchain.
+              </p>
+              <div className="flex gap-4">
+                <a
+                  href="https://github.com/manfromhellxbt/hypio-dashboard"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+                >
+                  GitHub
+                </a>
+                <a
+                  href="https://hyperevmscan.io"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+                >
+                  Explorer
+                </a>
+              </div>
+            </div>
+          </footer>
+
     </main>
   );
 }
