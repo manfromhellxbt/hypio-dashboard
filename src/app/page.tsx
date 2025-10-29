@@ -72,10 +72,10 @@ export default function Home() {
       // Initial fetch
       fetchData();
 
-      // Auto-refresh every 30 seconds
+      // Auto-refresh every 60 seconds
       const interval = setInterval(() => {
         fetchData();
-      }, 30000);
+      }, 60000);
 
       // Cleanup on unmount
       return () => clearInterval(interval);
@@ -129,7 +129,7 @@ export default function Home() {
                   Updated {getTimeAgo(lastUpdate)}
                 </p>
                 <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">
-                  Auto-refresh every 30s
+                  Blockchain sync: every 10 min
                 </p>
               </div>
             </div>
