@@ -71,7 +71,7 @@ export default function TopHoldersTable({ holders }: TopHoldersTableProps) {
               rel="noopener noreferrer"
               className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-mono block mb-2"
             >
-              {holder.address}
+              {holder.address.slice(0, 6)}...{holder.address.slice(-4)}
             </a>
             <div className="text-sm text-gray-600 dark:text-gray-400">
               Share: {holder.percentage}
