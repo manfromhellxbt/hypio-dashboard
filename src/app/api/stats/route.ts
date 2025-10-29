@@ -59,7 +59,20 @@ export async function GET() {
     // Get all snapshots for chart data
     const allSnapshots = await prisma.holderSnapshot.findMany({
       orderBy: { timestamp: 'asc' },
-      take: 100 // Last 100 snapshots
+      take: 30 // Last 30 snapshots for chart
+    });
+
+    // Calculate newHolders between snapshots
+    const history = allSnapshots.map((snapshot, index) => {
+      const newHolders = index > 0
+        ? snapshot.totalHolders - allSnapshots[index - 1].totalHolders
+        : 0;
+
+      return {
+        date: snapshot.timestamp.toISOString(),
+        totalHolders: snapshot.totalHolders,
+        newHolders: Math.max(0, newHolders) // Ensure non-negative
+      };
     });
 
     // Build response
@@ -101,11 +114,7 @@ export async function GET() {
             : null
         }
       },
-      history: allSnapshots.map(snapshot => ({
-        timestamp: snapshot.timestamp,
-        totalHolders: snapshot.totalHolders,
-        coverage: snapshot.coverage
-      })),
+      history,
       note: 'New holders are tracked from their first appearance in the blockchain. Run POST /api/sync regularly to update metrics.'
     });
 

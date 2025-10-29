@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import StatsCard from '@/components/StatsCard';
 import TopHoldersTable from '@/components/TopHoldersTable';
 import ThemeToggle from '@/components/ThemeToggle';
+import HolderGrowthChart from '@/components/HolderGrowthChart';
+import DistributionChart from '@/components/DistributionChart';
+
 
 interface HolderData {
   totalHolders: number;
@@ -28,35 +31,67 @@ interface StatsData {
     last7Days: { newHolders: number; percentageChange: string };
     last30Days: { newHolders: number; percentageChange: string };
   };
+    history: HistoryPoint[];
 }
+
+interface HistoryPoint {
+  date: string;
+  totalHolders: number;
+  newHolders: number;
+}
+
 
 export default function Home() {
   const [holderData, setHolderData] = useState<HolderData | null>(null);
   const [statsData, setStatsData] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [holdersRes, statsRes] = await Promise.all([
-          fetch('/api/holders'),
-          fetch('/api/stats')
-        ]);
-        
-        const holders = await holdersRes.json();
-        const stats = await statsRes.json();
-        
-        if (holders.success) setHolderData(holders);
-        if (stats.success) setStatsData(stats);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
+
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          const [holdersRes, statsRes] = await Promise.all([
+            fetch('/api/holders'),
+            fetch('/api/stats')
+          ]);
+          
+          const holders = await holdersRes.json();
+          const stats = await statsRes.json();
+          
+          if (holders.success) setHolderData(holders);
+          if (stats.success) setStatsData(stats);
+          setLastUpdate(new Date()); // ← НОВАЯ СТРОКА
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        } finally {
+          setLoading(false);
+        }
       }
-    }
 
-    fetchData();
-  }, []);
+      // Первая загрузка
+      fetchData();
+
+      // Автообновление каждые 30 секунд
+      const interval = setInterval(() => {
+        fetchData();
+      }, 30000);
+
+      // Очистка при размонтировании
+      return () => clearInterval(interval);
+    }, []);
+    
+    // Форматирование времени последнего обновления
+    const getTimeAgo = (date: Date) => {
+      const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+      
+      if (seconds < 60) return `${seconds} seconds ago`;
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+      const hours = Math.floor(minutes / 60);
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    };
+
 
   if (loading) {
     return (
@@ -75,15 +110,25 @@ export default function Home() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Hypio NFT Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">Real-time holder statistics</p>
-          {holderData?.lastSync && (
-            <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
-              Last updated: {new Date(holderData.lastSync).toLocaleString('en-US')}
-            </p>
-          )}
-        </div>
+          <div className="mb-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                  Hypio NFT Dashboard
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-2">Real-time holder statistics</p>
+              </div>
+              <div className="text-left md:text-right">
+                <p className="text-sm text-gray-500 dark:text-gray-500">
+                  Updated {getTimeAgo(lastUpdate)}
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">
+                  Auto-refresh every 30s
+                </p>
+              </div>
+            </div>
+          </div>
+
 
         {/* Main Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -112,7 +157,7 @@ export default function Home() {
           <StatsCard
             title="Coverage"
             value={holderData?.coverage || '0%'}
-            subtitle="Tracked tokens"
+            subtitle="Tracked NFTs"
             icon={
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -153,7 +198,16 @@ export default function Home() {
             />
           </div>
         </div>
-
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {statsData?.history && statsData.history.length > 0 && (
+              <HolderGrowthChart data={statsData.history} />
+            )}
+            
+            {holderData?.topHolders && (
+              <DistributionChart holders={holderData.topHolders} />
+            )}
+          </div>
         {/* Top Holders Table */}
         {holderData?.topHolders && (
           <TopHoldersTable holders={holderData.topHolders.slice(0, 10)} />

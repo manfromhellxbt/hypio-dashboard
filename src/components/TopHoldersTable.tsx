@@ -12,7 +12,9 @@ export default function TopHoldersTable({ holders }: TopHoldersTableProps) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top 10 Holders</h3>
-      <div className="overflow-x-auto">
+      
+      {/* Desktop view */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200 dark:border-gray-700">
@@ -46,6 +48,36 @@ export default function TopHoldersTable({ holders }: TopHoldersTableProps) {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile view */}
+      <div className="md:hidden space-y-3">
+        {holders.map((holder, index) => (
+          <div
+            key={holder.address}
+            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                #{index + 1}
+              </span>
+              <span className="text-lg font-bold text-gray-900 dark:text-white">
+                {holder.count} NFTs
+              </span>
+            </div>
+            <a
+              href={`https://hyperevmscan.io/address/${holder.address}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-mono block mb-2"
+            >
+              {holder.address}
+            </a>
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Share: {holder.percentage}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
