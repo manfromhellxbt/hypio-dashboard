@@ -129,7 +129,7 @@ export default function Home() {
                   Updated {getTimeAgo(lastUpdate)}
                 </p>
                 <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">
-                  Blockchain sync: every 10 min
+                  Auto-sync: every 10 min
                 </p>
               </div>
             </div>
