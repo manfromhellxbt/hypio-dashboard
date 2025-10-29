@@ -1,4 +1,4 @@
-# HyperEVM NFT Holder Tracking Dashboard
+# Hypio NFT Holder Tracking Dashboard
 
 A real-time NFT holder analytics dashboard for HyperEVM blockchain. Track NFT holders, monitor growth metrics, and analyze ownership distribution with blockchain data synced via Etherscan API V2.
 
