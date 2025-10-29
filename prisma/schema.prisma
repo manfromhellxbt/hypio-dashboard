@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+// NFT Transaction model
+model Transaction {
+  id               String   @id @default(cuid())
+  hash             String   @unique
+  blockNumber      String
+  timeStamp        String
+  from             String
+  to               String
+  tokenId          String
+  tokenName        String?
+  tokenSymbol      String?
+  contractAddress  String
+  createdAt        DateTime @default(now())
+
+  @@index([contractAddress])
+  @@index([tokenId])
+  @@index([to])
+  @@index([from])
+  @@index([blockNumber])
+}
+
+// Holder model - current state of holders
+model Holder {
+  id              String   @id @default(cuid())
+  address         String   @unique
+  nftCount        Int      @default(0)
+  percentage      Float    @default(0)
+  lastUpdated     DateTime @default(now()) @updatedAt
+
+  @@index([nftCount])
+}
+
+// Token ownership tracking
+model TokenOwnership {
+  id              String   @id @default(cuid())
+  tokenId         String   @unique
+  currentOwner    String
+  contractAddress String
+  lastTransferHash String?
+  lastUpdated     DateTime @default(now()) @updatedAt
+
+  @@index([currentOwner])
+  @@index([contractAddress])
+}
+
+// Statistics and metadata
+model Statistics {
+  id              String   @id @default(cuid())
+  key             String   @unique
+  value           String
+  lastUpdated     DateTime @default(now()) @updatedAt
+}
+
+// Historical snapshot of holder metrics
+model HolderSnapshot {
+  id                  String   @id @default(cuid())
+  timestamp           DateTime @default(now())
+  totalHolders        Int
+  totalSupply         Int
+  totalTransactions   Int
+  uniqueTokensTracked Int
+  coverage            Float
+  createdAt           DateTime @default(now())
+
+  @@index([timestamp])
+}
+
+// Track when each address became a holder
+model HolderHistory {
+  id              String   @id @default(cuid())
+  address         String
+  firstSeen       DateTime
+  lastSeen        DateTime @updatedAt
+  isActive        Boolean  @default(true)
+  nftCount        Int      @default(0)
+
+  @@unique([address])
+  @@index([firstSeen])
+  @@index([isActive])
+}
