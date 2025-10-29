@@ -218,34 +218,34 @@ export default function Home() {
         {holderData?.topHolders && (
           <TopHoldersTable holders={holderData.topHolders.slice(0, 10)} />
         )}
-      </div>
-          {/* Footer */}
-          <footer className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                © 2025 Hypio NFT Dashboard. Data from HyperEVM blockchain.
-              </p>
-              <div className="flex gap-4">
-                <a
-                  href="https://github.com/manfromhellxbt/hypio-dashboard"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
-                >
-                  GitHub
-                </a>
-                <a
-                  href="https://hyperevmscan.io"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
-                >
-                  Explorer
-                </a>
-              </div>
-            </div>
-          </footer>
 
+        {/* Footer */}
+        <footer className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              © 2025 Hypio NFT Dashboard. Data from HyperEVM blockchain.
+            </p>
+            <div className="flex gap-4">
+              <a
+                href="https://github.com/manfromhellxbt/hypio-dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+              >
+                GitHub
+              </a>
+              <a
+                href="https://hyperevmscan.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+              >
+                Explorer
+              </a>
+            </div>
+          </div>
+        </footer>
+      </div>
     </main>
   );
 }
